@@ -1,45 +1,61 @@
-#include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
-#include<string.h>
+#include <future>
+#include <thread>
+#include <chrono>
+#include <iostream>
+#include <stdlib.h>
 #include "helloworld.h"
 #include "loop.h"
-
-clock_t t;
+using namespace std;
 
 int main(){
-    FILE *fptr;
+    string fname;
  
-    char fname[100], c;
+    cout << "Enter the filename to run: 1)file1.c 2)file2.c\n";
+    cin >> fname;
  
-    printf("Enter the filename to run: 1)helloworld 2)whileloop\n");
-    scanf("%s", fname);
- 
-    // Open file
-    /*fptr = fopen(fname, "r");
-    if (fptr == NULL)
-    {
-        printf("Cannot open file...Exiting \n");
-        exit(0);
-    }*/
+    using namespace std::chrono_literals;
     
-    if(strcmp(fname,"helloworld") == 0){
-        t = clock();
-        double res = print(t);
-        printf("Function took %f seconds\n", res);
+   // auto future;
+    if(fname == "file1.c"){
+        auto future = std::async(std::launch::async, [] {
+        print();
+        return 1;
+        });
+        
+        auto status = future.wait_for(3s);
+
+        // Print status.
+        if (status == std::future_status::ready) {
+            std::cout << "Code run successfully" << std::endl;
+        } else {
+            std::cout << "Time Limit Exceeded.." << std::endl;
+            exit(0);
+        }
+        
     }
-    else if(strcmp(fname,"whileloop") == 0){
-        t = clock();
-        double res = loop(t);
-        if(res > 3.00)
-            printf("There is an infinite loop. Exiting.\n");
-        else
-            printf("Function took %f seconds\n", res);
+    
+    else if(fname == "file2.c"){
+        auto future = std::async(std::launch::async, [] {
+        loop();
+        return 1;
+        });
+        
+        auto status = future.wait_for(3s);
+
+        // Print status.
+        if (status == std::future_status::ready) {
+            std::cout << "Code run successfully" << std::endl;
+        } else {
+            std::cout << "Time Limit Exceeded.." << std::endl;
+            exit(0);
+        }
     }
+    
     else
         printf("Enter a valid filename\n");
     
+    
+    
+    
     return 0;
 }
-    
-    
